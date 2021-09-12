@@ -1,0 +1,173 @@
+---
+title: "Assignment1"
+author: "JasonChen s4657923"
+date: "11/09/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r cars}
+summary(cars)
+```
+
+# Part 1
+# RMarkdown Editing
+
+R Markdown is an authoring format that enables easy creation of dynamic documents, presentations, and reports from R.
+
+***In the above use bold and italics for editing.***
+
+[link] (https://rmarkdown.rstudio.com/lesson-8.html)
+
+
+```{r fastfood}
+library(tidyverse)
+fastfood<- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv')
+```
+
+```{r}
+fastfood %>% head(10)
+library(knitr)
+kable(fastfood[1:10,1:5])
+
+```
+
+library(janitor)
+
+```{r}
+fastfood %>%
+  filter(calories>1000)
+```
+```{r}
+dont_eat_this<-fastfood %>%
+  filter(total_fat>40 & total_carb>80)
+```
+
+```{r}
+fastfood%>%
+  filter(restaurant=='Mcdonalds')
+```
+
+# Part 2
+```{r}
+
+library(skimr)
+library(tidyverse)
+fastfood<- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv')
+skim(fastfood)
+```
+
+```{r}
+fastfood%>%
+  count(restaurant)
+```
+```{r}
+fastfood%>%
+  group_by(restaurant)%>%
+  summarise(mean_calories=mean(calories))
+```
+```{r}
+fastfood%>%
+  mutate(average_calories=mean(calories))
+  
+```
+```{r}
+library(ggplot2)
+ggplot(fastfood,
+  aes(restaurant,total_fat)) +
+  geom_point()
+
+```
+
+
+In conclusion, the total fat provided per restaurant is indistinguishable in general, but Burger King and Mcdonald's are the only two restaurants that offer higher-than-100-fat products. Where some of the restaurants like Subway, Diary Queen and Chick Fil-A offer o fat products.
+
+
+```{r}
+fastfood%>%
+  group_by(restaurant)%>%
+  summarise(max_total_fat=max(total_fat))
+fastfood%>%  
+  mutate(max_total_fat=max(total_fat))
+```
+
+```{r}
+ggplot(fastfood,
+  aes(sugar,protein)) +
+  geom_point()
+```
+
+# Part 3
+```{r}
+fastfood%>%
+  mutate_if(is.character,factor)
+```
+
+library(tidyverse)
+
+
+```{r}
+fastfood%>%
+  mutate(calories_type = cut_number(calories, n=3, labels = c("low", "med", "high")))
+  calories_type<-fastfood%>%mutate(calories_type = cut_number(calories, n=3, labels = c("low", "med", "high")))
+```
+
+
+```{r}
+ggplot(calories_type, 
+  aes(calories,calories_type,)) +
+  geom_col() +
+  theme_light()+
+  labs(x="Restaurantst", y="Calories Types",  
+       title="Data Visualisation", caption="Image : Calories type")+
+  facet_wrap(~restaurant)
+
+
+```
+
+
+```{r}
+trans_fat_percentage<-calories_type %>%
+  group_by(restaurant) %>%
+  mutate(trans_fat_percentage = trans_fat/total_fat * 10)
+```
+
+```{r}
+ggplot(trans_fat_percentage, 
+  aes(total_fat,trans_fat_percentage,)) +
+  geom_col() +
+  theme_light()+
+  labs(x="Restaurant", y="Trans Fat Percentage",  
+       title="Data Visualisation", caption="Image : Trans Fat percentage")+
+  facet_wrap(~restaurant)
+```
+
+```{r}
+trans_fat_percentage%>%
+  group_by(restaurant)%>%
+  summarise(mean_total_fat=mean(total_fat))
+```
+
+```{r}
+trans_fat_percentage %>%
+  group_by(restaurant) %>%
+  summarise(average_total_fat = mean(total_fat)) %>%
+  ungroup() %>%
+  mutate(restaurant = fct_reorder(restaurant, average_total_fat)) %>%
+  ggplot(aes(restaurant, average_total_fat)) +
+  geom_col() +
+  coord_flip() +
+  labs(x="Names of restaurant", y="Average Total Fat", title="Data Visualisation", caption="Image : Bar Graph")+
+  theme_light()
+```
+
+
+
+
+
+
+
